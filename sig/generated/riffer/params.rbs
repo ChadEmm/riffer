@@ -28,6 +28,15 @@ class Riffer::Params
   # : (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
   def optional: (Symbol, Class, ?description: String?, ?enum: Array[untyped]?, ?default: untyped, ?of: Class?) ?{ () -> void } -> void
 
+  # Checks if this Params definition is structurally equal to another.
+  #
+  # Compares self to passed in params to ensure required params exist by name
+  # Does a deep comparison of each param using Riffer::Param#is_equal?
+  #
+  # --
+  # : (Riffer::Params) -> bool
+  def is_equal?: (Riffer::Params) -> bool
+
   # Validates arguments against parameter definitions.
   #
   # Raises Riffer::ValidationError if validation fails.

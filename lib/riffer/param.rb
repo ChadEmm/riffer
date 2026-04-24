@@ -102,4 +102,25 @@ class Riffer::Param
 
     schema
   end
+
+  # Checks if this parameter definition is structurally equal to another.
+  #
+  # Compares self to passed in param based on name, type, required flag, and item type
+  # If self has nested params, runs a nested check on those as well.
+  #
+  #--
+  #: (Riffer::Param) -> bool
+  def is_equal?(other_param)
+    return false unless other_param.is_a?(Riffer::Param)
+    return false unless name == other_param.name
+    return false unless type == other_param.type
+    return false unless required == other_param.required
+    return false unless item_type == other_param.item_type
+
+    if nested_params && other_param.nested_params
+      nested_params.is_equal?(other_param.nested_params)
+    else
+      nested_params.nil? && other_param.nested_params.nil?
+    end
+  end
 end
