@@ -150,6 +150,7 @@ end
     b. Requires up-front declaration over dynamic instantiation; can only load steps from code
 2. Strict schema validation
     a. Schema is validated as soon as is practical rather than at execution / runtime
+        i. Input params are required to be within output params of previous step, not vice versa
     b. Requires a verbose setup, but makes it clear when errors occur (i.e. as soon as an invalid step is added)
 3. Riffer::Workflow::AgentStep uses `method_missing` ruby functionality
     a. Allows for extension and reuse of existing declarative syntax on Riffer::Agent

@@ -428,13 +428,13 @@ describe Riffer::Params do
       expect(params.is_equal?("not a params object")).must_equal false
     end
 
-    it "is_equal returns false if required parameters differ" do
+    it "is_equal returns false if other_params does not contain required parameters" do
       params1 = Riffer::Params.new
       params1.required(:name, String)
+      params1.required(:age, Integer)
 
       params2 = Riffer::Params.new
       params2.required(:name, String)
-      params2.required(:age, Integer)
 
       expect(params1.is_equal?(params2)).must_equal false
     end
@@ -458,6 +458,17 @@ describe Riffer::Params do
 
       params2 = Riffer::Params.new
       params2.optional(:count, Integer)
+      params2.required(:name, String)
+
+      expect(params1.is_equal?(params2)).must_equal true
+    end
+
+    it "is_equal returns true if other_params contains required params" do
+      params1 = Riffer::Params.new
+      params1.required(:name, String)
+
+      params2 = Riffer::Params.new
+      params2.required(:count, Integer)
       params2.required(:name, String)
 
       expect(params1.is_equal?(params2)).must_equal true

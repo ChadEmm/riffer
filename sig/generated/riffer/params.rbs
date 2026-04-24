@@ -30,7 +30,7 @@ class Riffer::Params
 
   # Checks if this Params definition is structurally equal to another.
   #
-  # Compares self to passed in params based on number of parameters and order
+  # Compares self to passed in params to ensure required params exist by name
   # Does a deep comparison of each param using Riffer::Param#is_equal?
   #
   # --

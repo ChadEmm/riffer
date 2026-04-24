@@ -119,7 +119,7 @@ class Riffer::Workflow::Base
         if self.steps.empty?
             workflow_input_schema = self.input_schema
             step_input_schema = step_class.input_schema
-            if workflow_input_schema && step_input_schema && !workflow_input_schema.is_equal?(step_input_schema)
+            if workflow_input_schema && step_input_schema && !step_input_schema.is_equal?(workflow_input_schema)
                 raise Riffer::Workflow::SchemaValidationError, "Input schema of #{step_class} is not compatible with workflow input schema"
             end
         end
@@ -128,7 +128,7 @@ class Riffer::Workflow::Base
         if self.steps.any?
             last_output_schema = self.steps.last.class.output_schema
             next_input_schema = step_class.input_schema
-            if last_output_schema && next_input_schema && !last_output_schema.is_equal?(next_input_schema)
+            if last_output_schema && next_input_schema && !next_input_schema.is_equal?(last_output_schema)
                 raise Riffer::Workflow::SchemaValidationError, "Output schema of #{self.steps.last.class} is not compatible with input schema of #{step_class}"
             end
         end
@@ -158,7 +158,7 @@ class Riffer::Workflow::Base
         output_schema = self.output_schema
         if output_schema && self.steps.any?
             last_output_schema = self.steps.last.class.output_schema
-            if last_output_schema && !last_output_schema.is_equal?(output_schema)
+            if last_output_schema && !output_schema.is_equal?(last_output_schema)
                 raise Riffer::Workflow::SchemaValidationError, "Output schema of #{self.steps.last.class} is not compatible with workflow output schema"
             end
         end

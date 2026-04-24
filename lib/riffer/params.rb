@@ -57,7 +57,7 @@ class Riffer::Params
 
   # Checks if this Params definition is structurally equal to another.
   #
-  # Compares self to passed in params based on number of parameters and order
+  # Compares self to passed in params to ensure required params exist by name
   # Does a deep comparison of each param using Riffer::Param#is_equal?
   #
   #--
@@ -68,7 +68,7 @@ class Riffer::Params
     required_params = @parameters.select(&:required)
     other_required_params = other_params.parameters.select(&:required)
 
-    return false unless required_params.size == other_required_params.size
+    return false unless required_params.size <= other_required_params.size
 
     required_params.all? do |param|
       other_param = other_required_params.find { |p| p.name == param.name }

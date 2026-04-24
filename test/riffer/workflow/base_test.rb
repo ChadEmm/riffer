@@ -239,6 +239,50 @@ describe Riffer::Workflow::Base do
             expect(error.message).must_match(/not compatible with input schema/)
         end
 
+        it "validates that each step's input schema can receive the previous step's output schema" do            
+            step1 = Class.new(Riffer::Workflow::Step) do
+                input_schema do
+                    required :name, String
+                end
+                output_schema do
+                    required :age, Integer
+                    required :gender, String
+                end
+
+                def execute(input)
+                    {}
+                end
+            end
+
+            step2 = Class.new(Riffer::Workflow::Step) do
+                input_schema do
+                    required :age, Integer
+                end
+                output_schema do
+                    required :result, Integer
+                end
+
+                def execute(input)
+                    {}
+                end
+            end
+
+            klass = Class.new(Riffer::Workflow::Base) do
+                input_schema do
+                    required :name, String
+                end
+                output_schema do
+                    required :result, Integer
+                end
+                step step1
+                step step2
+            end            
+
+            expect(klass.steps).must_be_instance_of(Array)
+            expect(klass.steps.length).must_equal(2)
+            expect(klass.steps[0]).must_be_instance_of(step1)
+        end
+
         it "adds the step to the workflow's steps" do
             step1 = Class.new(Riffer::Workflow::Step) do
                 input_schema do
@@ -429,6 +473,57 @@ describe Riffer::Workflow::Base do
             expect(result.steps[0].output).must_equal({ result: 6 })
             expect(result.steps[1].success).must_equal(true)
             expect(result.steps[1].output).must_equal({ final_result: 12 })
+        end
+
+        it "with compatible outputs steps returns a workflow result with succeeded status and final output" do
+            step1 = Class.new(Riffer::Workflow::Step) do
+                input_schema do
+                    required :start_num, Integer
+                end
+
+                output_schema do
+                    required :result, Integer
+                end
+
+                def execute(input)
+                    { result: input[:start_num] + 1 }
+                end
+            end
+
+            step2 = Class.new(Riffer::Workflow::Step) do
+                input_schema do
+                    required :result, Integer
+                end
+
+                output_schema do
+                    required :final_result, Integer
+                    required :multiplier, Integer
+                end
+
+                def execute(input)
+                    { final_result: input[:result] * 2, multiplier: 2 }
+                end
+            end
+
+            klass = Class.new(Riffer::Workflow::Base) do
+                input_schema do
+                    required :start_num, Integer
+                end
+                output_schema do
+                    required :final_result, Integer
+                end
+                step step1
+                step step2
+            end
+
+            result = klass.execute(start_num: 5)
+            expect(result.succeeded?).must_equal(true)
+            expect(result.result).must_equal({ final_result: 12, multiplier: 2 })
+            expect(result.steps.length).must_equal(2)
+            expect(result.steps[0].success).must_equal(true)
+            expect(result.steps[0].output).must_equal({ result: 6 })
+            expect(result.steps[1].success).must_equal(true)
+            expect(result.steps[1].output).must_equal({ final_result: 12, multiplier: 2 })
         end
     end
 end
